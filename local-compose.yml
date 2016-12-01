@@ -48,4 +48,14 @@ nginx:
   links:
     - consul:consul
   ports:
-    - 80:8001
+    - 8001:80
+cockroach:
+  extends:
+    file: docker-compose.yml
+    service: cockroach
+  build: ./cockroach
+  restart: never
+  environment:
+    - CONSUL=consul
+  links:
+    - consul:consul

@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+#
+# Prelude - make bash behave sanely
+# http://redsymbol.net/articles/unofficial-bash-strict-mode/
+#
+set -exuo pipefail
+if [[ -s "tojoin" ]]; then
+    value=$(<tojoin)
+    ./cockroach start --insecure --join "$value"
+  else
+    ./cockroach start --insecure
+fi
