@@ -30,7 +30,7 @@ class DeploymentGroupCreate extends Component {
 
           // force re-render
           this.forceUpdate();
-        })
+        });
     }
 
     this.handleNameChange = this.handleNameChange.bind(this);
