@@ -41,7 +41,10 @@ export const client = new ApolloClient({
     return `${o.__typename}:${id}`;
   },
   networkInterface: createNetworkInterface({
-    uri: `${GQL_PROTOCOL}://${GQL_HOSTNAME}:${GQL_PORT}/graphql`
+    uri: `${GQL_PROTOCOL}://${GQL_HOSTNAME}:${GQL_PORT}/graphql`,
+    opts: {
+      credentials: 'same-origin',
+    }
   })
 });
 

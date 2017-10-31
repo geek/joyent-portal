@@ -19,6 +19,9 @@
     "test-ci": "lerna run test-ci",
     "test": "lerna run test",
     "clean": "lerna clean --yes",
+    "bootstrap": "lerna bootstrap",
+    "dev": "lerna run dev --stream --parallel --scope my-joy-beta --scope cloudapi-gql",
+    "start": "lerna run start --stream --parallel --scope my-joy-beta --scope cloudapi-gql",
     "commitmsg": "commitlint -e",
     "precommit": "cross-env CI=1 redrun -s lint-staged format-staged",
     "postinstall": "lerna run prepublish",
@@ -77,5 +80,14 @@
     "react-dom": "16.0.0",
     "react-modal": "2.4.1",
     "hoist-non-react-statics": "2.3.1"
+  },
+  "dependencies": {
+    "good": "^7.3.0",
+    "good-console": "^6.4.0",
+    "good-squeeze": "^5.0.2",
+    "graphi": "^3.1.0",
+    "graphql-tools": "^2.6.1",
+    "hapi": "^16.6.2",
+    "inert": "^4.2.1"
   }
 }
