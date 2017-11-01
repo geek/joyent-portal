@@ -1,4 +1,7 @@
-const request = require('./request');
+'use strict';
+
+const CloudApi = require('./cloudapi');
+
 
 module.exports.list = () => { return request('listRoles'); };
 

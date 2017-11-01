@@ -1,4 +1,7 @@
-const request = require('./request');
+'use strict';
+
+const CloudApi = require('./cloudapi');
+
 
 module.exports.list = () => { return request('listFirewallRules', {}); };
 module.exports.listByMachine = (ctx) => { return request('listMachineFirewallRules', ctx); };

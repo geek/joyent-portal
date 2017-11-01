@@ -1,12 +1,11 @@
 'use strict';
 
-const Good = require('good');
 const Hapi = require('hapi');
+const HapiPino = require('hapi-pino');
 const Inert = require('inert');
 const Path = require('path');
 const Sso = require('sso-auth');
 const CloudApi = require('./packages/cloudapi-gql');
-const Config = require('./.envconf.js');
 
 
 const server = new Hapi.Server({
@@ -25,28 +24,19 @@ const handlerError = (err) => {
 };
 
 
-server.connection({ port: 80 });
+server.connection({
+  port: 80,
+  routes: {
+    cors: {
+      origin: ['localhost', 'localhost:80'],
+      credentials: true,
+      additionalHeaders: ['Cookie']
+    }
+  }
+});
 
 server.register(
   [
-    {
-      register: Good,
-      options: {
-        reporters: {
-          console: [
-            {
-              module: 'good-squeeze',
-              name: 'Squeeze',
-              args: [{ log: '*', response: '*' }]
-            },
-            {
-              module: 'good-console'
-            },
-            'stdout'
-          ]
-        }
-      }
-    },
     {
       register: Sso,
       options: {
@@ -58,9 +48,16 @@ server.register(
           ttl: 1000 * 60 * 60       // 1 hour
         },
         sso: {
-          keyId: Config.KEY_ID,
-          keyPath: Config.KEY_PATH
+          keyId: process.env.SDC_KEY_ID,
+          keyPath: process.env.SDC_KEY_PATH
         }
+      }
+    },
+    {
+      register: HapiPino,
+      options: {
+        prettyPrint: true,
+        logEvents: ['request-error']
       }
     },
     Inert,
@@ -69,32 +66,57 @@ server.register(
   (err) => {
     handlerError(err);
 
-    server.route({
-      method: 'GET',
-      path: '/service-worker.js',
-      config: {
-        handler: {
-          file: {
-            path: Path.join(__dirname, './packages/my-joy-beta/build/service-worker.js')
+    server.route([
+      {
+        method: 'GET',
+        path: '/static/{path*}',
+        config: {
+          auth: false,
+          handler: {
+            directory: {
+              path: Path.join(__dirname, './packages/my-joy-beta/build/static/'),
+              redirectToSlash: true,
+              index: false
+            }
+          }
+        }
+      },
+      {
+        method: 'GET',
+        path: '/{path}.json',
+        config: {
+          auth: false,
+          handler: (request, reply) => {
+            const path = Path.join(__dirname, `./packages/my-joy-beta/build/${request.params.path}.json`);
+            reply.file(path);
+          }
+        }
+      },
+      {
+        method: 'GET',
+        path: '/service-worker.js',
+        config: {
+          auth: false,
+          handler: (request, reply) => {
+            const path = Path.join(__dirname, `./packages/my-joy-beta/build/service-worker.js`);
+            reply.file(path);
+          }
+        }
+      },
+      {
+        method: '*',
+        path: '/{path*}',
+        config: {
+          handler: {
+            file: {
+              path: Path.join(__dirname, './packages/my-joy-beta/build/index.html')
+            }
           }
         }
       }
-    });
+    ]);
 
-    server.route({
-      method: 'GET',
-      path: '/{path*}',
-      config: {
-        auth: 'sso',
-        handler: {
-          directory: {
-            path: Path.join(__dirname, './packages/my-joy-beta/build/'),
-            redirectToSlash: true,
-            index: true
-          }
-        }
-      }
-    });
+    server.auth.default('sso');
 
     server.start((err) => {
       handlerError(err);

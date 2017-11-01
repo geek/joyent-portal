@@ -1,47 +1,69 @@
-const request = require('./request');
+'use strict';
 
-const snapshots = {
-  list: ctx => request('listMachineSnapshots', ctx),
-  get: ctx => request('getMachineSnapshot', ctx),
-  create: ctx => request('createMachineSnapshot', ctx),
-  destroy: ctx => request('deleteMachineSnapshot', ctx)
+const CloudApi = require('./cloudapi');
+
+
+exports.list = (args, request) => {
+  return CloudApi('listMachines', args, request);
 };
 
-const metadata = {
-  list: ({ id }) => request.fetch(`/:login/machines/${id}/metadata`),
-  get: ({ id, key }) => request.fetch(`/:login/machines/${id}/metadata/${key}`),
-  destroy: ctx => request('', ctx)
+exports.get = (args, request) => {
+  return CloudApi('getMachine', args, request);
 };
 
-const firewall = {
-  enable: ctx => request('enableMachineFirewall', ctx),
-  disable: ctx => request('disableMachineFirewall', ctx)
+exports.create = (args, request) => {
+  return CloudApi('createMachine', args, request);
 };
 
-const tags = {
-  list: ctx => request('listMachineTags', ctx),
-  get: ctx => request('getMachineTag', ctx),
-  add: ctx => request('addMachineTags', ctx),
-  replace: ctx => request('replaceMachineTags', ctx),
+exports.stop = ctx => CloudApi('stopMachine', ctx);
+exports.start = uuid => CloudApi('startMachine', uuid);
+exports.startFromSnapshot = ctx => CloudApi('startMachineFromSnapshot', ctx);
+exports.reboot = ctx => CloudApi('rebootMachine', ctx);
+
+exports.resize = (args, request) => {
+  const options = {
+    path: `/my/machines/${args.id}?action=resize?package=${args.package}`
+  };
+  return CloudApi('fetch', options, request);
+};
+
+exports.rename = ctx => CloudApi('', ctx);
+module.exports.destroy = ctx => CloudApi('deleteMachine', ctx);
+module.exports.audit = ({ id }) => CloudApi('machineAudit', id);
+
+module.exports.snapshots = {
+  list: ctx => CloudApi('listMachineSnapshots', ctx),
+  get: ctx => CloudApi('getMachineSnapshot', ctx),
+  create: ctx => CloudApi('createMachineSnapshot', ctx),
+  destroy: ctx => CloudApi('deleteMachineSnapshot', ctx)
+};
+
+module.exports.metadata = {
+  list: ({ id }, request) => {
+    const options = {
+      path: `/my/machines/${id}/metadata`
+    };
+    return CloudApi('fetch', options, request);
+  },
+  get: ({ id, key }, request) => {
+    const options = {
+      path: `/my/machines/${id}/metadata/${key}`
+    };
+    return CloudApi('fetch', options, request);
+  },
+  destroy: ctx => Request('', ctx)
+};
+
+exports.firewall = {
+  enable: ctx => CloudApi('enableMachineFirewall', ctx),
+  disable: ctx => CloudApi('disableMachineFirewall', ctx)
+};
+
+exports.tags = {
+  list: ctx => CloudApi('listMachineTags', ctx),
+  get: ctx => CloudApi('getMachineTag', ctx),
+  add: ctx => CloudApi('addMachineTags', ctx),
+  replace: ctx => CloudApi('replaceMachineTags', ctx),
   destroy: ctx =>
-    request(ctx.tag ? 'deleteMachineTag' : 'deleteMachineTags', ctx)
+    CloudApi(ctx.tag ? 'deleteMachineTag' : 'deleteMachineTags', ctx)
 };
-
-module.exports.list = ctx => request('listMachines', ctx);
-module.exports.get = ctx => request('getMachine', ctx);
-module.exports.create = ctx => request('createMachine', ctx);
-module.exports.stop = ctx => request('stopMachine', ctx);
-module.exports.start = uuid => request('startMachine', uuid);
-module.exports.startFromSnapshot = ctx =>
-  request('startMachineFromSnapshot', ctx);
-module.exports.reboot = ctx => request('rebootMachine', ctx);
-module.exports.resize = ({ id, ...rest }) =>
-  request.fetch(`/:login/machines/${id}?action=resize?package=${rest.package}`);
-module.exports.rename = ctx => request('', ctx);
-module.exports.destroy = ctx => request('deleteMachine', ctx);
-module.exports.audit = ({ id }) => request('machineAudit', id);
-
-module.exports.snapshots = snapshots;
-module.exports.metadata = metadata;
-module.exports.firewall = firewall;
-module.exports.tags = tags;

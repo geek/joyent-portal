@@ -1,4 +1,7 @@
-const request = require('./request');
+'use strict';
+
+const CloudApi = require('./cloudapi');
+
 
 // lists all networks, including fabric networks
 module.exports.list = () => { return request('listNetworks'); };

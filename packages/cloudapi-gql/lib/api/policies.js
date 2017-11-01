@@ -1,4 +1,8 @@
-const request = require('./request');
+'use strict';
+
+const CloudApi = require('./cloudapi');
+
+
 // const aperture = require('aperture');
 // const { config } = require('aperture-config');
 //

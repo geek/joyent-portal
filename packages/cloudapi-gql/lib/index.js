@@ -11,7 +11,7 @@ const Schema = Fs.readFileSync(Path.join(__dirname, '/schema/schema.graphql'));
 module.exports = function (server, options, next) {
   const graphiOptions = {
     graphiqlPath: false,
-    schema: Schema,
+    schema: Schema.toString(),
     resolvers: Resolvers
   };
 

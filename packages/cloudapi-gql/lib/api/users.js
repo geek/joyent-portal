@@ -1,4 +1,6 @@
-const request = require('./request');
+'use strict';
+
+const CloudApi = require('./cloudapi');
 
 module.exports.list = () => { return request('listUsers'); };
 module.exports.get = (ctx) => { return request('getUser', ctx); };

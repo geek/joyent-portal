@@ -16,7 +16,6 @@
     "faker": "graphql-faker ./lib/schema/schema.graphql"
   },
   "dependencies": {
-    "@2fd/graphdoc": "^2.4.0",
     "apollo-errors": "^1.5.1",
     "boom": "^6.0.0",
     "bunyan": "^1.8.12",
@@ -24,10 +23,11 @@
     "force-array": "^3.1.0",
     "hasha": "^3.0.0",
     "node-fetch": "^1.7.3",
-    "smartdc-auth": "^2.5.6",
-    "triton": "^5.4.0"
+    "triton": "^5.4.0",
+    "wreck": "^14.0.0"
   },
   "devDependencies": {
+    "@2fd/graphdoc": "^2.4.0",
     "belly-button": "^4.0.1",
     "execa": "^0.8.0",
     "graphql-faker": "^1.4.0",

@@ -1,4 +1,12 @@
-const request = require('./request');
+'use strict';
 
-module.exports.get = () => { return request('getAccount'); };
-module.exports.update = (ctx) => { return request('updateAccount', ctx); };
+const CloudApi = require('./cloudapi');
+
+
+exports.get = (args, request) => {
+  return CloudApi('getAccount', args, request);
+};
+
+exports.update = (args, request) => {
+  return CloudApi('updateAccount', args, request);
+};
