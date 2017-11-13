@@ -15,6 +15,7 @@ const GLOBAL =
         }
       };
 
+const GQL_URL = process.env.REACT_APP_GQL_URL || `${window.location.origin}/graphql`;
 export const client = new ApolloClient({
   dataIdFromObject: o => {
     const id = o.id
@@ -36,9 +37,12 @@ export const client = new ApolloClient({
     return `${o.__typename}:${id}`;
   },
   networkInterface: createNetworkInterface({
-    uri: `${window.location.origin}/graphql`,
+    uri: GQL_URL,
     opts: {
-      credentials: 'same-origin',
+      credentials: process.env.REACT_APP_GQL_URL ? 'include' : 'same-origin',
+      headers: {
+        'X-CSRF-Token': document.cookie.replace(/(?:(?:^|.*;\s*)crumb\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+      }
     }
   })
 });

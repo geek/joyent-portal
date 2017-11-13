@@ -169,4 +169,5 @@ prototypes/*/package-lock.json
 _env*
 keys*
 
-.envconf.js
+.env.js
+.vscode
